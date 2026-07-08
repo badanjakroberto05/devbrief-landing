@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevBrief - Client reports your dev agency clients actually read</title>
+<meta name="description" content="Connect Jira & GitHub. Get a branded, plain-language monthly report for every retainer client. Review, edit, send - in 10 minutes instead of 3 hours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#faf8f3; --ink:#191714; --muted:#6b6459;
+    --green:#1e4d3b; --green-deep:#143528;
+    --amber:#b45309; --amber-bg:#f7ead2;
+    --line:#e4ded2; --card:#ffffff;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',-apple-system,sans-serif;
+    color:var(--ink); background:var(--paper);
+    line-height:1.65; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif { font-family:'Fraunces',Georgia,serif; font-weight:600; letter-spacing:-0.01em; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 28px; }
+  a { color:inherit; }
+
+  /* ---- nav ---- */
+  nav { display:flex; justify-content:space-between; align-items:center; padding:26px 0; border-bottom:1px solid var(--line); }
+  .logo { font-family:'Fraunces',serif; font-weight:700; font-size:1.35rem; text-decoration:none; }
+  .logo em { font-style:normal; color:var(--green); }
+  .nav-links { display:flex; gap:26px; align-items:center; font-size:0.92rem; }
+  .nav-links a { text-decoration:none; color:var(--muted); }
+  .nav-links a:hover { color:var(--ink); }
+  .nav-links a.cta { color:var(--green); font-weight:600; border-bottom:2px solid var(--green); padding-bottom:1px; }
+
+  .btn {
+    display:inline-block; background:var(--green); color:#fff;
+    padding:15px 30px; border-radius:6px; font-weight:600;
+    text-decoration:none; border:none; font-size:1rem; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background .15s ease;
+  }
+  .btn:hover { background:var(--green-deep); }
+  .btn-line { background:transparent; color:var(--green); box-shadow:inset 0 0 0 1.5px var(--green); }
+  .btn-line:hover { background:#eef3ef; }
+  .btn-amber { background:var(--amber); }
+  .btn-amber:hover { background:#92400e; }
+
+  /* ---- hero ---- */
+  .hero { padding:76px 0 84px; display:grid; grid-template-columns:1.12fr 0.88fr; gap:56px; align-items:center; }
+  .spots {
+    display:inline-flex; align-items:center; gap:9px; font-size:0.82rem; font-weight:600;
+    color:var(--amber); background:var(--amber-bg); border:1px solid #eacf9e;
+    padding:6px 14px 6px 11px; border-radius:999px; margin-bottom:24px;
+  }
+  .spots .dot { width:8px; height:8px; border-radius:50%; background:var(--amber); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.45; transform:scale(.8);} }
+  .hero h1 { font-size:clamp(2.2rem,4.8vw,3.5rem); line-height:1.07; margin-bottom:20px; font-weight:600; }
+  .hero h1 .u { background-image:linear-gradient(transparent 68%, #d8e6dc 68%); }
+  .hero p.sub { font-size:1.15rem; color:var(--muted); max-width:530px; margin-bottom:24px; }
+  .hero p.sub strong { color:var(--ink); }
+  .hero-proof { list-style:none; margin:0 0 32px; display:grid; gap:9px; font-size:0.97rem; }
+  .hero-proof li { padding-left:28px; position:relative; }
+  .hero-proof li::before {
+    content:"✓"; position:absolute; left:0; top:1px; width:19px; height:19px;
+    background:var(--green); color:#fff; border-radius:50%; font-size:0.7rem; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hero-proof li b { font-weight:600; }
+  .hero-actions { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .btn-big { padding:17px 32px; font-size:1.05rem; box-shadow:0 10px 24px -10px rgba(30,77,59,.55); }
+  .btn-big small { display:block; font-size:0.72rem; font-weight:500; opacity:.85; margin-top:1px; }
+  .risk { margin-top:16px; font-size:0.85rem; color:var(--muted); }
+  .risk span { white-space:nowrap; }
+  .risk span + span::before { content:"·"; margin:0 8px; color:#c9c2b4; }
+
+  /* hero visual: report + client reply */
+  .hero-right { position:relative; padding-bottom:66px; }
+  .client-reply {
+    position:absolute; bottom:0; left:-14px; right:34px; background:#fff;
+    border:1px solid var(--line); border-left:3px solid var(--amber);
+    border-radius:8px; box-shadow:0 18px 40px -16px rgba(25,23,20,.25);
+    padding:14px 18px; font-size:0.82rem; transform:rotate(-1deg);
+  }
+  .client-reply .from { font-size:0.68rem; color:var(--muted); margin-bottom:3px; }
+  .client-reply .from b { color:var(--ink); }
+  .client-reply p { line-height:1.5; }
+
+  /* mini report card in hero */
+  .hero-right { position:relative; }
+  .mini-report {
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    box-shadow:0 1px 2px rgba(25,23,20,.05), 0 24px 48px -18px rgba(25,23,20,.18);
+    padding:26px 28px; font-size:0.78rem; transform:rotate(1.2deg);
+  }
+  .mini-report .mr-head { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--green); padding-bottom:8px; margin-bottom:12px; }
+  .mini-report .mr-head b { font-family:'Fraunces',serif; font-size:0.95rem; }
+  .mini-report .mr-head i { font-style:normal; color:var(--muted); font-size:0.68rem; }
+  .mini-report .mr-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--line); }
+  .mini-report .mr-row:last-child { border-bottom:none; }
+  .mini-report .mr-row b { font-weight:600; }
+  .mini-report .mr-row span { color:var(--green); font-weight:600; }
+  .sticker {
+    position:absolute; top:-18px; right:-10px; background:var(--ink); color:var(--paper);
+    font-size:0.72rem; font-weight:600; padding:6px 12px; border-radius:4px; transform:rotate(-3deg);
+  }
+
+  /* ---- sections ---- */
+  section { padding:72px 0; }
+  section.tint { background:#f2efe7; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .sec-label { font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:10px; }
+  h2 { font-size:clamp(1.6rem,3vw,2.2rem); margin-bottom:14px; line-height:1.2; }
+  .sec-intro { color:var(--muted); max-width:560px; margin-bottom:42px; }
+
+  /* pains */
+  .pains { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card); }
+  .pain { padding:32px 28px; border-right:1px solid var(--line); }
+  .pain:last-child { border-right:none; }
+  .pain .num { font-family:'Fraunces',serif; font-size:1.9rem; color:var(--line); font-weight:700; display:block; margin-bottom:10px; }
+  .pain h3 { font-size:1.08rem; margin-bottom:8px; }
+  .pain p { color:var(--muted); font-size:0.93rem; }
+
+  /* how it works */
+  .how { display:grid; grid-template-columns:repeat(3,1fr); gap:36px; }
+  .how-step { border-top:3px solid var(--green); padding-top:20px; }
+  .how-step .lbl { font-size:0.78rem; font-weight:600; color:var(--green); letter-spacing:0.06em; text-transform:uppercase; }
+  .how-step h3 { font-size:1.15rem; margin:8px 0 10px; }
+  .how-step p { color:var(--muted); font-size:0.95rem; }
+
+  /* report preview */
+  .report-frame {
+    max-width:700px; margin:0 auto; background:var(--card); border:1px solid var(--line);
+    border-radius:8px; box-shadow:0 1px 2px rgba(25,23,20,.05), 0 30px 60px -20px rgba(25,23,20,.2);
+    padding:38px 42px; font-size:0.86rem;
+  }
+  .rf-brand { display:flex; justify-content:space-between; border-bottom:2px solid var(--green); padding-bottom:10px; margin-bottom:16px; }
+  .rf-brand b { font-family:'Fraunces',serif; font-size:1.05rem; }
+  .rf-brand b span { color:var(--green); }
+  .rf-brand .c { text-align:right; color:var(--muted); font-size:0.74rem; line-height:1.4; }
+  .rf-title { font-family:'Fraunces',serif; font-size:1.15rem; font-weight:600; }
+  .rf-meta { color:var(--green); font-weight:600; font-size:0.78rem; }
+  .rf-stats { display:flex; gap:10px; margin:16px 0 20px; }
+  .rf-stat { flex:1; border:1px solid var(--line); border-radius:6px; text-align:center; padding:10px 4px; background:var(--paper); }
+  .rf-stat b { color:var(--green); font-size:1.2rem; display:block; font-family:'Fraunces',serif; }
+  .rf-stat i { font-style:normal; font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
+  .rf h4 { font-size:0.95rem; border-bottom:1px solid var(--line); padding-bottom:5px; margin:18px 0 9px; font-family:'Inter',sans-serif; font-weight:600; }
+  .rf h4 b { color:var(--green); font-weight:700; }
+  .rf ul { padding-left:18px; color:#403a31; }
+  .rf li { margin-bottom:6px; }
+  .rf-more { text-align:center; color:#a8a094; font-size:0.75rem; margin-top:12px; }
+  .caption { text-align:center; color:var(--muted); font-size:0.9rem; margin-top:18px; }
+
+  /* pricing */
+  .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .tier { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:32px 28px; display:flex; flex-direction:column; }
+  .tier.hot { border:1.5px solid var(--green); box-shadow:0 16px 40px -18px rgba(30,77,59,.35); position:relative; }
+  .tier .tag { position:absolute; top:-13px; left:28px; background:var(--green); color:#fff; font-size:0.72rem; font-weight:600; padding:4px 12px; border-radius:3px; letter-spacing:0.04em; }
+  .tier h3 { font-size:1.1rem; }
+  .tier .price { font-family:'Fraunces',serif; font-size:2.3rem; font-weight:600; margin:12px 0 2px; }
+  .tier .price small { font-size:0.95rem; color:var(--muted); font-weight:400; font-family:'Inter',sans-serif; }
+  .tier .founding { color:var(--amber); font-weight:600; font-size:0.87rem; margin-bottom:16px; }
+  .tier .founding s { color:#a8a094; font-weight:400; }
+  .tier ul { list-style:none; margin:14px 0 26px; color:var(--muted); font-size:0.92rem; flex:1; }
+  .tier ul li { padding:6px 0 6px 22px; position:relative; border-bottom:1px dashed var(--line); }
+  .tier ul li:last-child { border-bottom:none; }
+  .tier ul li::before { content:"-"; position:absolute; left:0; color:var(--green); font-weight:700; }
+  .tier .btn { text-align:center; }
+
+  /* waitlist */
+  .cta-box { background:var(--green-deep); border-radius:12px; color:#f4f1ea; padding:60px 34px; text-align:center; }
+  .cta-box h2 { color:#fff; }
+  .cta-box .sec-label { color:#9dc3ae; }
+  .cta-box p.lead { color:#c3cfc4; max-width:540px; margin:0 auto 30px; }
+  .wl-form { display:flex; gap:10px; max-width:470px; margin:0 auto 12px; flex-wrap:wrap; justify-content:center; }
+  .wl-form input { flex:1; min-width:230px; padding:15px 16px; border-radius:6px; border:1px solid #3c6a53; background:#fff; font-size:1rem; font-family:'Inter',sans-serif; }
+  .fine { font-size:0.8rem; color:#8fa896; }
+  .or { margin:30px auto 16px; color:#8fa896; font-size:0.85rem; display:flex; align-items:center; gap:14px; max-width:340px; }
+  .or::before,.or::after { content:""; flex:1; height:1px; background:#3c6a53; }
+
+  footer { padding:40px 0 48px; color:var(--muted); font-size:0.85rem; }
+  footer .foot { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--line); padding-top:28px; }
+  footer a { color:var(--muted); }
+
+  @media (max-width:880px) {
+    .hero { grid-template-columns:1fr; padding:52px 0 48px; gap:48px; }
+    .hero-right { max-width:440px; }
+    .client-reply { left:0; right:12px; }
+    .btn-big { width:100%; text-align:center; }
+    .pains { grid-template-columns:1fr; }
+    .pain { border-right:none; border-bottom:1px solid var(--line); }
+    .pain:last-child { border-bottom:none; }
+    .how { grid-template-columns:1fr; gap:28px; }
+    .tiers { grid-template-columns:1fr; }
+    .report-frame { padding:26px 22px; }
+    .nav-links a:not(.cta) { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <a class="logo" href="#">Dev<em>Brief</em></a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#sample">Sample report</a>
+      <a href="#pricing">Pricing</a>
+      <a class="cta" href="#waitlist">Join the waitlist</a>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-left">
+      <span class="spots"><span class="dot"></span>Founding offer - 50% off forever · 10 spots, first come first served</span>
+      <h1>Stop losing retainers to <span class="u">invisible work</span>.</h1>
+      <p class="sub">Your clients don't read Jira - so every month they wonder what they're paying for. DevBrief turns your tickets and PRs into a branded, plain-language report your client actually reads. <strong>10 minutes instead of 3 hours, per client.</strong></p>
+      <ul class="hero-proof">
+        <li><b>Connect once</b> - read-only Jira &amp; GitHub, zero workflow change</li>
+        <li><b>AI drafts, you approve</b> - nothing is sent without your sign-off</li>
+        <li><b>Your brand on every page</b> - PDF or share link, EN &amp; HR</li>
+      </ul>
+      <div class="hero-actions">
+        <a class="btn btn-big" href="#waitlist">Reserve founding spot - €24.50/mo<small>50% off locked in forever</small></a>
+        <a class="btn btn-line" href="#sample">See a sample report</a>
+      </div>
+      <p class="risk"><span>Refundable any time before launch</span><span>Waitlist needs no card</span><span>EU data hosting</span></p>
+    </div>
+    <div class="hero-right">
+      <div class="sticker">Sent in 10 min</div>
+      <div class="mini-report">
+        <div class="mr-head"><b>Monthly Report - June</b><i>for Alpine Gear Co.</i></div>
+        <div class="mr-row"><b>Installment payments live</b><span>Shipped</span></div>
+        <div class="mr-row"><b>Homepage 3.1s → 1.4s</b><span>Shipped</span></div>
+        <div class="mr-row"><b>9 bugs fixed</b><span>Done</span></div>
+        <div class="mr-row"><b>Order tracking emails</b><span>In progress</span></div>
+      </div>
+      <div class="client-reply">
+        <div class="from">Re: June report - <b>client@alpinegear.example</b></div>
+        <p>"Finally clear what we got this month. Approved the Q3 budget - keep these coming."</p>
+      </div>
+    </div>
+  </header>
+</div>
+
+<section class="tint">
+  <div class="wrap">
+    <p class="sec-label">The problem</p>
+    <h2>Retainers don't get cut because of bad work.<br>They get cut because of invisible work.</h2>
+    <p class="sec-intro">Every dev agency we've talked to has the same monthly ritual - and the same quiet fear when the invoice goes out.</p>
+    <div class="pains">
+      <div class="pain"><span class="num">01</span><h3>Hours of copy-pasting every month</h3><p>Someone on your team spends half a day per client pulling tickets out of Jira into a doc nobody enjoys writing.</p></div>
+      <div class="pain"><span class="num">02</span><h3>"What did we get for our retainer?"</h3><p>Your client can't see the work, so they question the invoice. The work was good - it just wasn't visible.</p></div>
+      <div class="pain"><span class="num">03</span><h3>Dashboards nobody opens</h3><p>You gave them a Jira board or a BI dashboard. They logged in once. Business owners want a story, not a burndown chart.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <p class="sec-label">How it works</p>
+    <h2>From raw tickets to a client-ready report</h2>
+    <p class="sec-intro">Three steps. No new workflow for your team, no login for your client.</p>
+    <div class="how">
+      <div class="how-step"><span class="lbl">Step one</span><h3>Connect your tools</h3><p>Read-only OAuth to Jira Cloud and GitHub. We never write anything, never touch your code. Map projects and repos to each client once.</p></div>
+      <div class="how-step"><span class="lbl">Step two</span><h3>AI drafts the report</h3><p>Every ticket and PR is translated into plain business language: what was delivered, why it matters, what's in progress, what's next. Your logo, your colours.</p></div>
+      <div class="how-step"><span class="lbl">Step three</span><h3>You review &amp; send</h3><p>Nothing goes out without your approval. Edit any section, regenerate, then export a branded PDF or a shareable link.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="tint" id="sample">
+  <div class="wrap">
+    <p class="sec-label" style="text-align:center;">Sample output</p>
+    <h2 style="text-align:center;">This is what your client receives</h2>
+    <div style="height:26px;"></div>
+    <div class="report-frame rf">
+      <div class="rf-brand"><b>NORD<span>DIGITAL</span></b><div class="c">Report prepared for<br><strong>Alpine Gear Co.</strong></div></div>
+      <div class="rf-title">Monthly Development Report</div>
+      <div class="rf-meta">June 2026 · Alpine Gear e-commerce platform</div>
+      <div class="rf-stats">
+        <div class="rf-stat"><b>14</b><i>items delivered</i></div>
+        <div class="rf-stat"><b>2</b><i>new features</i></div>
+        <div class="rf-stat"><b>9</b><i>bugs fixed</i></div>
+        <div class="rf-stat"><b>3</b><i>in progress</i></div>
+      </div>
+      <h4><b>1.</b> What was delivered this month</h4>
+      <ul>
+        <li><strong>Installment payments at checkout</strong> - customers can now split purchases into 2–12 installments. Released June 18.</li>
+        <li><strong>Homepage speed-up</strong> - load time cut from 3.1s to 1.4s. <em>Faster pages directly reduce cart abandonment.</em></li>
+      </ul>
+      <h4><b>2.</b> Business value of the work done</h4>
+      <ul>
+        <li>Installment payments remove the most common drop-off reason for carts above €150.</li>
+        <li>Automated tracking reduces "where is my package" support calls - a third of May's volume.</li>
+      </ul>
+      <div class="rf-more">· · · sections 3 &amp; 4: In progress · Next steps · · ·</div>
+    </div>
+    <p class="caption">Generated from real Jira + GitHub activity. Reviewed by a human before sending. Available in English and Croatian.</p>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <p class="sec-label">Pricing</p>
+    <h2>Pays for itself with one saved hour</h2>
+    <p class="sec-intro">Founding members lock in 50% off, forever. Ten spots, then it's gone.</p>
+    <div class="tiers">
+      <div class="tier">
+        <h3>Starter</h3>
+        <div class="price">€49<small>/mo</small></div>
+        <div class="founding">Founding: <s>€49</s> €24.50/mo forever</div>
+        <ul><li>Up to 3 clients</li><li>Jira + GitHub connectors</li><li>Branded PDF &amp; share link</li><li>EN + HR reports</li></ul>
+        <a class="btn btn-line" href="#waitlist">Join waitlist</a>
+      </div>
+      <div class="tier hot">
+        <div class="tag">Most agencies</div>
+        <h3>Agency</h3>
+        <div class="price">€99<small>/mo</small></div>
+        <div class="founding">Founding: <s>€99</s> €49.50/mo forever</div>
+        <ul><li>Up to 10 clients</li><li>Everything in Starter</li><li>Custom report sections</li><li>Priority support</li></ul>
+        <a class="btn" href="#waitlist">Join waitlist</a>
+      </div>
+      <div class="tier">
+        <h3>Scale</h3>
+        <div class="price">€199<small>/mo</small></div>
+        <div class="founding">Founding: <s>€199</s> €99.50/mo forever</div>
+        <ul><li>Unlimited clients</li><li>Everything in Agency</li><li>White-label options</li><li>Onboarding call</li></ul>
+        <a class="btn btn-line" href="#waitlist">Join waitlist</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="waitlist">
+  <div class="wrap">
+    <div class="cta-box">
+      <p class="sec-label">Early access</p>
+      <h2>Be one of the first 10 founding agencies</h2>
+      <p class="lead">Join the waitlist for early access - or lock in a founding spot now at 50% off forever. Fully refundable if we don't launch.</p>
+
+      <form class="wl-form" action="https://formspree.io/f/xnjkrrag" method="POST">
+        <input type="email" name="email" placeholder="you@agency.com" required>
+        <button class="btn" type="submit">Join the waitlist</button>
+      </form>
+      <p class="fine">No spam. One email when early access opens.</p>
+
+      <div class="or">or skip the line</div>
+
+      <a class="btn btn-amber" href="https://buy.stripe.com/00w9ATe0zh0t2Td14t7Re00" target="_blank" rel="noopener">Reserve founding spot - €24.50/mo</a>
+      <p class="fine" style="margin-top:12px;">Starter plan, 50% off locked in forever. Refundable any time before launch.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <span>DevBrief - built by BadX Media</span>
+      <span>Read-only access · EU data hosting · GDPR-first · <a href="mailto:badanjakroberto@gmail.com">Contact</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
