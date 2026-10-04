@@ -22,6 +22,7 @@
     color:var(--ink); background:var(--paper);
     line-height:1.65; font-size:16px;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
   h1,h2,h3,.serif { font-family:'Fraunces',Georgia,serif; font-weight:600; letter-spacing:-0.01em; }
   .wrap { max-width:1080px; margin:0 auto; padding:0 28px; }
@@ -186,7 +187,7 @@
 
   @media (max-width:880px) {
     .hero { grid-template-columns:1fr; padding:52px 0 48px; gap:48px; }
-    .hero-right { max-width:440px; }
+    .hero-right { max-width:380px; width:100%; margin:0 auto; }
     .client-reply { left:0; right:12px; }
     .btn-big { width:100%; text-align:center; }
     .pains { grid-template-columns:1fr; }
@@ -196,6 +197,25 @@
     .tiers { grid-template-columns:1fr; }
     .report-frame { padding:26px 22px; }
     .nav-links a:not(.cta) { display:none; }
+  }
+
+  @media (max-width:560px) {
+    .wrap { padding:0 18px; }
+    /* badge wraps instead of forcing width */
+    .spots { white-space:normal; align-items:flex-start; line-height:1.4; border-radius:12px; font-size:0.78rem; padding:8px 13px; }
+    .spots .dot { margin-top:5px; flex:none; }
+    .hero h1 { font-size:clamp(1.9rem,7.5vw,2.3rem); }
+    .hero p.sub { font-size:1.05rem; }
+    .risk span { display:inline-block; }
+    /* hero visual: straighten + fit the fixed-width card to the screen */
+    .hero-right { max-width:340px; padding-bottom:0; }
+    .mini-report { transform:none; padding:20px 22px; }
+    .sticker { right:8px; top:-13px; }
+    .client-reply { position:static; transform:none; left:auto; right:auto; margin-top:16px; padding:14px 16px; }
+    .client-reply .from { overflow-wrap:anywhere; }
+    .cta-box { padding:44px 20px; }
+    .wl-form input { min-width:0; }
+    footer .foot { flex-direction:column; }
   }
 </style>
 </head>
